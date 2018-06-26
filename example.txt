@@ -1,0 +1,50 @@
+Record 1:
+{
+    "contributors": {
+        "authors": [
+            {
+                "firstname": "Graham",
+                "lastname": "Preston"
+            }
+        ]
+    },
+    "date": {
+        "day": 26,
+        "month": 6,
+        "year": 2018
+    },
+    "contents": "Some example record"
+}
+
+Record 2:
+{
+    "contributors": {
+        "authors": [
+            {
+                "firstname": "Andrew",
+                "lastname": "Leaf"
+            }
+        ]
+    },
+    "publisher": "A totally real publisher",
+    "contents": "A different record"
+}
+
+Inferred Schema:
+{
+    "contributors": {
+        "authors": [
+            {
+                "firstname": string,
+                "lastname": string
+            }
+        ]
+    },
+    "date": {
+        "day": int,
+        "month": int,
+        "year": int
+    },
+    "publisher": string,
+    "contents": string
+}
