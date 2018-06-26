@@ -10,5 +10,3 @@ for file in os.listdir(directory):
         with open(openFile) as f:
             data = json.load(f)
         print(data['contents'])
-        
-

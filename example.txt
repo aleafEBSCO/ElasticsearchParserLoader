@@ -19,12 +19,10 @@ Record 1:
 Record 2:
 {
     "contributors": {
-        "authors": [
-            {
-                "firstname": "Andrew",
-                "lastname": "Leaf"
-            }
-        ]
+        "authors": {
+            "firstname": "Andrew",
+            "lastname": "Leaf"
+        }
     },
     "publisher": "A totally real publisher",
     "contents": "A different record"
@@ -33,12 +31,12 @@ Record 2:
 Inferred Schema:
 {
     "contributors": {
-        "authors": [
+        "authors": listof(
             {
                 "firstname": string,
                 "lastname": string
             }
-        ]
+        )
     },
     "date": {
         "day": int,
