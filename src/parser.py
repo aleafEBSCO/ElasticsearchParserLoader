@@ -1,11 +1,14 @@
-from elasticsearch import Elasticsearch
+import os
+import json
 
-es = Elasticsearch()
+directory = os.fsencode("../records")
+for file in os.listdir(directory):
+    filename = os.fsdecode(file)
 
-doc = {
-    'author': 'andrew',
-    'text': 'some text'
-}
+    openFile = "../records" + "/" + filename
+    if openFile.endswith(".json"):
+        with open(openFile) as f:
+            data = json.load(f)
+        print(data['contents'])
+        
 
-res = es.index(index="temp", doc_type="doc", id=1, body=doc)
-print(res)

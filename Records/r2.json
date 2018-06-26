@@ -1,0 +1,10 @@
+{
+	"contributors": {
+		"authors": [{
+			"firstname": "Andrew",
+			"lastname": "Leaf"
+		}]
+	},
+	"publisher": "A totally real publisher",
+	"contents": "A different record"
+}
