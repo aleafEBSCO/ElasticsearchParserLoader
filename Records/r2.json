@@ -1,9 +1,14 @@
 {
 	"contributors": {
-		"authors": [{
+		"authors": [
+            {
+                "firstname": "Graham",
+                "lastname": "Preston"
+            },
+			{
 			"firstname": "Andrew",
-			"lastname": "Leaf"
-		}]
+			"lastname": 1
+		    }]
 	},
 	"publisher": "A totally real publisher",
 	"contents": "A different record"
