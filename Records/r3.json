@@ -1,4 +1,4 @@
-{
+ {
 	"contributors": {
 		"authors": [
             {
@@ -10,7 +10,12 @@
 			"lastname": 1
 		    }]
 	},
+    "date": {
+        "day": 26,
+        "month": "july",
+        "year": 2018
+    },
 	"publisher": "A totally real publisher",
 	"contents": "A different record",
-    "id": 12345
+    "id": "A1345"
 }
