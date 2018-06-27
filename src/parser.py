@@ -12,31 +12,45 @@ def main(records_dir):
             with open(path) as f:
                 data.append(json.load(f))
 
-    # schema = accumulate_schema(data)
-    schema = compute_schema(data[0])
+    schema = {}
+    for d in data:
+        schema = compute_schema(d, schema)
     pprint(schema)
 
 
-# Compute the schema for a single dictionary
-def compute_schema(d):
+# Compute the overall schema given a current schema
+def compute_schema(d, schema):
     # When encoding a dictionary to the schema, all the keys are added and all
     # the value types are put into a new or existing set
-    schema = {}
     for key in d:
         new_type = parser_type(d[key])
+        if type(new_type) is dict:
+            schema = add_schema(key, new_type, schema)
+        else:
+            schema = add_class(key, new_type, schema)
+    return schema
 
-        # New key -> type set must be created
-        if key not in schema:
-            schema[key] = [new_type]
-        # Only add new type if it isn't already there
-        elif new_type not in schema[key]:
-            schema[key].append(new_type)
+
+def add_schema(key, s, schema):
+    # TODO: Breaks if one value is schema and another is class
+    # (everything may need to be a list after all...)
+    schema[key] = s
+    return schema
+
+
+def add_class(key, c, schema):
+    # New key -> type set must be created
+    if key not in schema:
+        schema[key] = [c]
+    # Only add new type if it isn't already there
+    elif c not in schema[key]:
+        schema[key].append(c)
     return schema
 
 
 def parser_type(o):
     if type(o) is dict:
-        return compute_schema(o)
+        return compute_schema(o, {})
     else:
         return type(o)
 
