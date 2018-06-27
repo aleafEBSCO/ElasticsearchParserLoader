@@ -10,7 +10,7 @@ def main(records_dir):
         if path.endswith(".json"):
             with open(path) as f:
                 data = json.load(f)
-            traverse(data, "", final_paths)
+            traverse_dict(data, "", final_paths)
 
     for key in final_paths:
         print(key + ": ", end="")
@@ -21,32 +21,29 @@ def main(records_dir):
 
 
 def traverse(obj, path, all_paths):
-    if type(obj) is not dict:
-        if type(obj) is list:
-            for item in obj:
-                if type(item) is dict:
-                    for key in item.keys():
-                        traverse(item[key], (path + key + "/"), all_paths)
-                else:
-                    if path in all_paths:
-                        all_paths[path].add(type(item))
-                    else:
-                        all_paths[path] = {type(item)}
-
-                    # print(curPath + ": ", end="")
-                    # print(type(obj))
-        else:
-            if path in all_paths:
-                all_paths[path].add(type(obj))
-            else:
-                all_paths[path] = {type(obj)}
-            # print(curPath + ": ", end="")
-            # print(type(obj))
+    if type(obj) is dict:
+        traverse_dict(obj, path, all_paths)
+    elif type(obj) is list:
+        traverse_list(obj, path, all_paths)
     else:
-        for key in obj.keys():
-            traverse(obj[key], (path + key + "/"), all_paths)
+        traverse_other(obj, path, all_paths)
 
-    return all_paths
+
+def traverse_dict(d, path, all_paths):
+    for key in d:
+        traverse(d[key], (path + key + "/"), all_paths)
+
+
+def traverse_list(l, path, all_paths):
+    for item in l:
+        traverse(item, path, all_paths)
+
+
+def traverse_other(o, path, all_paths):
+    if path in all_paths:
+        all_paths[path].add(type(o))
+    else:
+        all_paths[path] = {type(o)}
 
 
 if __name__ == '__main__':
