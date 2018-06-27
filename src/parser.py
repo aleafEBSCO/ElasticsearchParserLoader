@@ -1,49 +1,58 @@
 import os
 import json
 
+from pprint import pprint
+
 
 def main(records_dir):
-    final_paths = {}
+    # final_paths = dict()
+    schema = dict()
 
     for filename in os.listdir(records_dir):
         path = records_dir + filename
-        if path.endswith(".json"):
+        if path.endswith('.json'):
             with open(path) as f:
                 data = json.load(f)
-            traverse_dict(data, "", final_paths)
+            print('Traversing', filename)
+            pprint(schema)
+            traverse_dict(data, schema)
 
-    for key in final_paths:
-        print(key + ": ", end="")
-        for item in final_paths[key]:
-            print(item, end="")
-            print(", ", end="")
-        print()
+    print('\n-----------------------------------')
+    pprint(schema)
+    # for key in final_paths:
+    #     print(key + ': ', end='')
+    #     for item in final_paths[key]:
+    #         print(str(item) + ', ', end='')
+    #     print()
 
 
-def traverse(obj, path, all_paths):
+def traverse(obj, schema):
     if type(obj) is dict:
-        traverse_dict(obj, path, all_paths)
+        traverse_dict(obj, schema)
     elif type(obj) is list:
-        traverse_list(obj, path, all_paths)
+        traverse_list(obj, schema)
     else:
-        traverse_other(obj, path, all_paths)
+        # schema = set()
+        traverse_other(obj, schema)
 
 
-def traverse_dict(d, path, all_paths):
+def traverse_dict(d, schema):
     for key in d:
-        traverse(d[key], (path + key + "/"), all_paths)
+        if key not in schema:
+            schema[key] = dict()
+        traverse(d[key], schema[key])
 
 
-def traverse_list(l, path, all_paths):
+def traverse_list(l, schema):
     for item in l:
-        traverse(item, path, all_paths)
+        traverse(item, schema)
 
 
-def traverse_other(o, path, all_paths):
-    if path in all_paths:
-        all_paths[path].add(type(o))
+def traverse_other(o, schema):
+    if type(o) in schema:
+        schema[type(o)] += 1
     else:
-        all_paths[path] = {type(o)}
+        schema[type(o)] = 1
 
 
 if __name__ == '__main__':
