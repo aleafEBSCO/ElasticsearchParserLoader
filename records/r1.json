@@ -1,11 +1,9 @@
 {
     "contributors": {
-        "authors": [
-            {
-                "firstname": "Graham",
-                "lastname": "Preston"
-            }
-        ]
+        "authors": {
+            "firstname": "Graham",
+            "lastname": "Preston"
+        }
     },
     "date": {
         "day": 26,

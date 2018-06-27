@@ -5,8 +5,6 @@ from pprint import pprint
 
 
 def main(records_dir):
-    # final_paths = dict()
-
     data = []
     for filename in os.listdir(records_dir):
         path = records_dir + filename
@@ -14,36 +12,57 @@ def main(records_dir):
             with open(path) as f:
                 data.append(json.load(f))
 
-    schema = compute_schema(data)
-
-    # print('\n-----------------------------------')
+    # schema = accumulate_schema(data)
+    schema = compute_schema(data[0])
     pprint(schema)
-    # for key in final_paths:
-    #     print(key + ': ', end='')
-    #     for item in final_paths[key]:
-    #         print(str(item) + ', ', end='')
-    #     print()
 
 
-def compute_schema(data):
+# Compute the schema for a single dictionary
+def compute_schema(d):
+    # When encoding a dictionary to the schema, all the keys are added and all
+    # the value types are put into a new or existing set
+    schema = {}
+    for key in d:
+        new_type = parser_type(d[key])
+
+        # New key -> type set must be created
+        if key not in schema:
+            schema[key] = [new_type]
+        # Only add new type if it isn't already there
+        elif new_type not in schema[key]:
+            schema[key].append(new_type)
+    return schema
+
+
+def parser_type(o):
+    if type(o) is dict:
+        return compute_schema(o)
+    else:
+        return type(o)
+
+
+# =================================================================
+def accumulate_schema(data):
     schema = {}
     for d in data:
-        traverse_dict(d, schema)
+        traverse_dict_old(d, schema)
     return schema
 
 
 def traverse(obj, schema):
     if type(obj) is dict:
-        traverse_dict(obj, schema)
+        traverse_dict_old(obj, schema)
     elif type(obj) is list:
         traverse_list(obj, schema)
 
 
-def traverse_dict(d, schema):
+# TODO: Handle list types
+def traverse_dict_old(d, schema):
     for key in d:
-        # HACK: Type check for other here instead of in traverse to conserve type in schema
-        # If value of current key is a dict or list, extend the schema and go deeper
-        if type(d[key]) in [dict, list]:
+        # HACK: Type check for other here instead of in traverse to conserve
+        # type in schema
+        # If value of current key is a dict or list, extend schema
+        if type(d[key]) in [dict]:  # , list]:
             schema[key] = dict()
             traverse(d[key], schema[key])
         # Otherwise, add the type to the schema
