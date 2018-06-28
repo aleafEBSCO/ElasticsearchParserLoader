@@ -1,7 +1,10 @@
 import os
 import json
+import boto3
 
 
+
+'''
 def recurseObject(obj, curPath, paths):
     if type(obj) is not dict:
         if type(obj) is list:
@@ -48,3 +51,4 @@ for key in finalPaths.keys():
         print(item, end="")
         print(", ", end="")
     print()
+'''
