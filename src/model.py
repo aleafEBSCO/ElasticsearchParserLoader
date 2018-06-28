@@ -12,6 +12,12 @@ class Atom:
         else:
             raise TypeError
 
+    def __hash__(self):
+        return hash(self.type)
+
+    def __eq__(self, other):
+        return self.__class__ == other.__class__ and self.type == other.type
+
     def __str__(self):
         return str(self.type)
 
@@ -50,7 +56,16 @@ class Record:
         s = s[:-2] + '}'
         return s
 
-# TODO: Implement array types
+
+class Array:
+    """Represents array types."""
+
+    def __init__(self, val):
+        types = set([utils.parser_type(v) for v in val])
+        self.array_type = Union(types)
+
+    def __str__(self):
+        return f'[({self.array_type})*]'
 
 
 class Union:
