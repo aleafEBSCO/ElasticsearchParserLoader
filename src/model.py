@@ -27,6 +27,18 @@ class Record:
         else:
             raise TypeError
 
+    def fuse(self, other):
+        """Fuse this Record with another."""
+        d = other.record
+        for key in d:
+            if key in self.record:
+                if type(self.record[key]) is Union:
+                    self.record[key].add(d[key])
+                else:
+                    self.record[key] = Union([self.record[key], d[key]])
+            else:
+                self.record[key] = d[key]
+
     def __str__(self):
         s = '{'
         for key in self.record:
@@ -47,7 +59,14 @@ class Union:
     """
 
     def __init__(self, types):
-        self.types = types
+        self.types = list(types)
+
+    def contains(self, t):
+        return t in self.types
+
+    def add(self, t):
+        if t not in self.types:
+            self.types.append(t)
 
     def __str__(self):
         return ' + '.join([str(t) for t in self.types])
