@@ -39,3 +39,15 @@ class Record:
         return s
 
 # TODO: Implement array types
+
+
+class Union:
+    """Represents a union of multiple types of data.
+    Example: <class 'int'> + <class 'str'> + {'hello': <class 'bool'>}
+    """
+
+    def __init__(self, types):
+        self.types = types
+
+    def __str__(self):
+        return ' + '.join([str(t) for t in self.types])
