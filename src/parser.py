@@ -1,50 +1,55 @@
 import os
 import json
 
+from pprint import pprint
 
-def recurseObject(obj, curPath, paths):
-    if type(obj) is not dict:
-        if type(obj) is list:
-            for item in obj:
-                if type(item) is dict:
-                    for key in item.keys():
-                        recurseObject(item[key], (curPath + key + "/"), paths)
-                else:
-                    if curPath in paths:
-                        paths[curPath].add(type(item))
-                    else:
-                        paths[curPath] = set([type(item)])
 
-                    #print(curPath + ": ", end="")
-                    #print(type(obj))
+def main(records_dir):
+    data = []
+    for filename in os.listdir(records_dir):
+        path = records_dir + filename
+        if path.endswith('.json'):
+            with open(path) as f:
+                data.append(json.load(f))
+
+    schema = {}
+    for d in data:
+        schema = compute_schema(d, schema)
+    pprint(schema)
+
+
+# Compute the overall schema given a current schema
+def compute_schema(d, schema):
+    for key in d:
+        new_type = parser_type(d[key])
+        if type(new_type) is dict:
+            add_schema(new_type, schema, key, d)
         else:
-            if curPath in paths:
-                paths[curPath].add(type(obj))
-            else:
-                paths[curPath] = set([type(obj)])
-            #print(curPath + ": ", end="")
-            #print(type(obj))
+            add_class(new_type, schema, key)
+    return schema
+
+
+def add_schema(new_type, schema, key, d):
+    # TODO: Could probably be futher refactored (see schema[key] and d[key])
+    if key not in schema:
+        schema[key] = {'schema': new_type, 'classes': set()}
     else:
-        for key in obj.keys():
-            recurseObject(obj[key], (curPath + key + "/"), paths)
-
-    return paths
+        schema[key]['schema'] = compute_schema(d[key], schema[key]['schema'])
 
 
-finalPaths = dict();
+def add_class(new_type, schema, key):
+    if key not in schema:
+        schema[key] = {'schema': dict(), 'classes': {new_type}}
+    else:
+        schema[key]['classes'].add(new_type)
 
-for filename in os.listdir("../records"):
 
-    openFile = "../records" + "/" + filename
-    if openFile.endswith(".json"):
-        with open(openFile) as f:
-            data = json.load(f)
-        recurseObject(data, "", finalPaths)
-        #print(data['contents'])
+def parser_type(o):
+    if type(o) is dict:
+        return compute_schema(o, {})
+    else:
+        return type(o)
 
-for key in finalPaths.keys():
-    print(key + ": ", end="")
-    for item in finalPaths[key]:
-        print(item, end="")
-        print(", ", end="")
-    print()
+
+if __name__ == '__main__':
+    main('../records/')

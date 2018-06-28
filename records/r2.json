@@ -4,12 +4,12 @@
             {
                 "firstname": "Graham",
                 "lastname": "Preston"
-            },
-			{
-			"firstname": "Andrew",
-			"lastname": 1
-		    }]
+            }, {
+				"firstname": "Andrew",
+				"lastname": 1
+		    }
+		]
 	},
 	"publisher": "A totally real publisher",
-	"contents": "A different record"
+	"contents": 4
 }
