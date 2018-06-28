@@ -1,7 +1,8 @@
 import os
 import json
+import model
 
-from pprint import pprint
+# from pprint import pprint
 
 
 def main(records_dir):
@@ -12,10 +13,15 @@ def main(records_dir):
             with open(path) as f:
                 data.append(json.load(f))
 
-    schema = {}
+    # schema = {}
+    # for d in data:
+    #     schema = compute_schema(d, schema)
+    # pprint(schema)
+
+    schema = model.Record({})
     for d in data:
-        schema = compute_schema(d, schema)
-    pprint(schema)
+        schema.fuse(model.Record(d))
+    print(schema)
 
 
 # Compute the overall schema given a current schema

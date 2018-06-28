@@ -35,6 +35,8 @@ class Record:
 
     def fuse(self, other):
         """Fuse this Record with another."""
+        # TODO: Issues arise when fusing because sometimes nested Records appear
+        # as Record objects and other times they're still simply dicts
         d = other.record
         for key in d:
             if key in self.record:
@@ -44,6 +46,12 @@ class Record:
                     self.record[key] = Union([self.record[key], d[key]])
             else:
                 self.record[key] = d[key]
+
+    def __hash__(self):
+        return hash(repr(self.record))
+
+    def __eq__(self, other):
+        return self.__class__ == other.__class__ and self.record == other.record
 
     def __str__(self):
         s = '{'
