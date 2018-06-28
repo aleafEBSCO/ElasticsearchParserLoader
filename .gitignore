@@ -2,3 +2,4 @@
 venv/
 ignore/
 src/test.py
+src/__pycache__/
