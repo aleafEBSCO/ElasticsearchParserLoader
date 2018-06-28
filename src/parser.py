@@ -22,17 +22,26 @@ def main(records_dir):
 def compute_schema(d, schema):
     for key in d:
         new_type = parser_type(d[key])
-        if key not in schema:
-            if type(new_type) is dict:
-                schema[key] = {'schema': new_type, 'classes': set()}
-            else:
-                schema[key] = {'schema': dict(), 'classes': {new_type}}
+        if type(new_type) is dict:
+            add_schema(new_type, schema, key, d)
         else:
-            if type(new_type) is dict:
-                schema[key]['schema'] = compute_schema(d[key], schema[key]['schema'])
-            else:
-                schema[key]['classes'].add(new_type)
+            add_class(new_type, schema, key)
     return schema
+
+
+def add_schema(new_type, schema, key, d):
+    # TODO: Could probably be futher refactored (see schema[key] and d[key])
+    if key not in schema:
+        schema[key] = {'schema': new_type, 'classes': set()}
+    else:
+        schema[key]['schema'] = compute_schema(d[key], schema[key]['schema'])
+
+
+def add_class(new_type, schema, key):
+    if key not in schema:
+        schema[key] = {'schema': dict(), 'classes': {new_type}}
+    else:
+        schema[key]['classes'].add(new_type)
 
 
 def parser_type(o):
