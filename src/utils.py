@@ -7,7 +7,6 @@ def parser_type(o):
     elif type(o) is dict:
         return model.Record(o)
     elif type(o) is list:
-        # TODO
-        pass
+        return model.Array(o)
     else:
         return model.Atom(o)

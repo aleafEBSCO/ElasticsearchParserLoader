@@ -1,4 +1,5 @@
 import utils
+from functools import reduce
 
 
 class Atom:
@@ -55,13 +56,15 @@ class Record:
 
     def __str__(self):
         s = '{'
-        for key in self.record:
-            if type(key) is str:
-                s += f"'{key}'"
-            else:
-                s += str(key)
-            s += f': {self.record[key]}, '
-        s = s[:-2] + '}'
+        if self.record:
+            for key in self.record:
+                if type(key) is str:
+                    s += f"'{key}'"
+                else:
+                    s += str(key)
+                s += f': {self.record[key]}, '
+            s = s[:-2]
+        s += '}'
         return s
 
 
@@ -82,14 +85,36 @@ class Union:
     """
 
     def __init__(self, types):
-        self.types = list(types)
+        self.classes = set()
+        records = []
+        for t in types:
+            if type(t) is Record:
+                records.append(t)
+            else:
+                self.classes.add(t)
 
-    def contains(self, t):
-        return t in self.types
+        self.record = Record({})
+        if records:
+            def reduce_fuse(r1, r2):
+                r1.fuse(r2)
+                return r1
+            self.record = reduce(reduce_fuse, records)
+
+    # def contains(self, t):
+    #     return t in self.types
 
     def add(self, t):
-        if t not in self.types:
-            self.types.append(t)
+        if type(t) is Record:
+            self.record.fuse(t)
+        else:
+            self.classes.add(t)
 
     def __str__(self):
-        return ' + '.join([str(t) for t in self.types])
+        s = ''
+        if self.classes:
+            s += ' + '.join([str(t) for t in self.classes])
+            if self.record.record:
+                s += ' + '
+        if self.record.record:
+            s += str(self.record)
+        return s
