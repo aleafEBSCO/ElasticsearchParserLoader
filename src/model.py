@@ -34,10 +34,26 @@ class Record:
         else:
             raise TypeError
 
+    def superset(self, other):
+        """Determine if this Record is a superset of another."""
+        d = other.record
+        for key in d:
+            if key in self.record:
+                # Desired type is not in Union -> False
+                if type(self.record[key]) is Union:
+                    if not self.record[key].contains(d[key]):
+                        return False
+                # Value is not correct type -> False
+                else:
+                    if self.record[key] != d[key]:
+                        return False
+            # key isn't in self.record -> False
+            else:
+                return False
+        return True
+
     def fuse(self, other):
         """Fuse this Record with another."""
-        # TODO: Issues arise when fusing because sometimes nested Records appear
-        # as Record objects and other times they're still simply dicts
         d = other.record
         for key in d:
             if key in self.record:
@@ -100,10 +116,16 @@ class Union:
                 return r1
             self.record = reduce(reduce_fuse, records)
 
-    # def contains(self, t):
-    #     return t in self.types
+    def contains(self, t):
+        """Determine if this Union contains a given type t.
+        self.add(t) -> self?"""
+        if type(t) is Record:
+            self.record.superset(t)
+        else:
+            return t in self.classes
 
     def add(self, t):
+        """Add t to this Union."""
         if type(t) is Record:
             self.record.fuse(t)
         else:
